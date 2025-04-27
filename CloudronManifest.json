@@ -1,0 +1,18 @@
+{
+    "id": "com.keila.app",
+    "title": "Keila",
+    "author": "Keila Team",
+    "description": "Open-source newsletter tool",
+    "icon": "file://logo.png",
+    "version": "1.0.0",
+	"manifestVersion": 2,
+    "healthCheckPath": "/",
+    "httpPort": 4000,
+    "addons": {
+        "postgresql": {}
+    },
+    "memoryLimit": 512,
+    "tags": ["newsletter", "email", "marketing"],
+    "website": "https://www.keila.io",
+    "contactEmail": "support@keila.io"
+}
