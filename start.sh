@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# Cloudron: Generate and persist SECRET_KEY_BASE if not set
-SECRET_FILE="/app/data/.secret"
+# Ensure /app/data exists (Cloudron writable directory)
+mkdir -p /app/data
 
-if [ -z "${SECRET_KEY_BASE}" ] && [ ! -f "${SECRET_FILE}" ]; then
-    echo "Generating new SECRET_KEY_BASE"
-    SECRET_KEY_BASE=$(head -c 64 /dev/urandom | base64 | tr -d '\n')
-    echo "export SECRET_KEY_BASE=${SECRET_KEY_BASE}" > "${SECRET_FILE}"
+# Generate SECRET_KEY_BASE only if not already set
+if [ ! -f /app/data/.secret ]; then
+  head -c 48 /dev/urandom | base64 > /app/data/.secret
 fi
 
-# Source persisted secret if available
-[ -f "${SECRET_FILE}" ] && source "${SECRET_FILE}"
+export SECRET_KEY_BASE=$(cat /app/data/.secret)
 
 # Start Keila with Cloudron-friendly settings
 exec /app/code/keila/bin/keila start

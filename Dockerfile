@@ -38,8 +38,8 @@ FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c663
 
 # Cloudron-specific environment setup
 # Set locale
-ENV LANG=UTF-8 \
-    LC_ALL=UTF-8 \
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
     MIX_ENV=prod \
     PORT=4000
 

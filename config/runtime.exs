@@ -185,29 +185,30 @@ if config_env() == :prod do
     """)
   end
 
-  # Secret Key Base
-  try do
-    secret_key_base = System.fetch_env!("SECRET_KEY_BASE")
+# Secret Key Base
+try do
+  secret_key_base =
+    System.get_env("SECRET_KEY_BASE") ||
+      File.read!("/app/data/.secret") |> String.trim()
 
-    live_view_salt =
-      :crypto.hash(:sha384, secret_key_base <> "live_view_salt") |> Base.url_encode64()
+  live_view_salt =
+    :crypto.hash(:sha384, secret_key_base <> "live_view_salt") |> Base.url_encode64()
 
-    config(:keila, KeilaWeb.Endpoint,
-      secret_key_base: secret_key_base,
-      live_view: [signing_salt: live_view_salt]
-    )
-  rescue
-    e ->
-      exit_from_exception.(e, """
-      You must set SECRET_KEY_BASE.
+  config(:keila, KeilaWeb.Endpoint,
+    secret_key_base: secret_key_base,
+    live_view: [signing_salt: live_view_salt]
+  )
+rescue
+  e ->
+    exit_from_exception.(e, """
+    You must set SECRET_KEY_BASE or ensure /app/data/.secret exists.
 
-      This should be a strong secret with a length
-      of at least 64 characters.
+    This should be a strong secret with a length of at least 64 characters.
 
-      One way to create a strong secret is running the following command:
-      head -c 48 /dev/urandom | base64
-      """)
-  end
+    One way to create a strong secret is running the following command:
+    head -c 48 /dev/urandom | base64
+    """)
+end
 
   # Hashids
   secret_key_base =
