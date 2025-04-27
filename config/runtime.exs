@@ -21,16 +21,24 @@ put_if_not_empty = fn
 end
 
 if config_env() == :prod do
+
   # Database
+
   try do
-    db_url = System.fetch_env!("DB_URL")
+    db_url =
+      System.get_env("POSTGRESQL_URL") ||
+      System.get_env("DB_URL") ||
+      raise """
+      You must provide the POSTGRESQL_URL (Cloudron) or DB_URL environment variable in the format:
+      postgres://user:password/database
+      """
+
     ssl = System.get_env("DB_ENABLE_SSL") in [1, "1", "true", "TRUE"]
 
     ssl_opts =
       []
       |> then(fn opts ->
         verify_peer? = System.get_env("DB_VERIFY_SSL_HOST", "TRUE") in [1, "1", "true", "TRUE"]
-
         if verify_peer? do
           Keyword.put(opts, :verify, :verify_peer)
         else
@@ -39,7 +47,6 @@ if config_env() == :prod do
       end)
       |> then(fn opts ->
         ca_cert_pem = System.get_env("DB_CA_CERT")
-
         cacerts =
           if ca_cert_pem not in [nil, ""] do
             ca_cert_pem
@@ -58,10 +65,11 @@ if config_env() == :prod do
       url: db_url,
       ssl: ssl,
       ssl_opts: ssl_opts
+
   rescue
     e ->
       exit_from_exception.(e, """
-      You must provide the DB_URL environment variable in the format:
+      You must provide the POSTGRESQL_URL (Cloudron) or DB_URL environment variable in the format:
       postgres://user:password/database
       """)
   end
