@@ -37,9 +37,16 @@ RUN mix compile && \
 FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c
 
 # Cloudron-specific environment setup
+# Create read/write folder
+if [[ ! -f /app/data/.initialized ]]; then
+  echo "Fresh installation, setting up data directory..."
+  # Setup commands here
+  touch /app/data/.initialized
+  echo "Done."
+fi
 # Set locale
 ENV LANG=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
     MIX_ENV=prod \
     PORT=4000
 
@@ -76,5 +83,8 @@ ENV MAILER_SMTP_PORT=${CLOUDRON_MAIL_SMTP_PORT}
 ENV MAILER_SMTP_FROM_EMAIL=${CLOUDRON_MAIL_FROM}
 
 EXPOSE ${PORT}
+# change ownership of files
+chown -R cloudron:cloudron /app/data
+
 # Use start.sh as entrypoint
 CMD ["/app/code/start.sh"]
