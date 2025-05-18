@@ -1,5 +1,5 @@
 {
-    "id": "com.keila.app",
+    "id": "io.keila.cloudron",
     "title": "Keila",
     "author": "Keila Team",
     "description": "Open-source newsletter tool",
@@ -9,12 +9,19 @@
     "healthCheckPath": "/",
     "httpPort": 4000,
     "addons": {
-        "localstorage": {},
-        "sendmail": {},
         "postgresql": {}
     },
-    "memoryLimit": 512,
+    "memoryLimit": 1024,
     "tags": ["newsletter", "email", "marketing"],
     "website": "https://www.keila.io",
-    "contactEmail": "support@keila.io"
+    "contactEmail": "support@keila.io",
+    "postInstallMessage": "The default admin login is:\n\n- **Email:** admin@yourdomain.com\n- **Password:** admin\n\nPlease change the password immediately after first login.\n\n**Captcha Configuration Required:**\nFor production use, configure hCaptcha credentials using these environment variables:\n- CAPTCHA_SITE_KEY\n- CAPTCHA_SECRET_KEY\n- CAPTCHA_PROVIDER (default: hcaptcha)\n\nSet these via:\n``````",
+    "checklist": {
+        "change-password": {
+            "message": "Change the default admin password after first login."
+        },
+        "captcha-credentials": {
+            "message": "Add CAPTCHA_SITE_KEY and CAPTCHA_SECRET_KEY credentials"
+        }
+    }
 }
